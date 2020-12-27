@@ -1,83 +1,134 @@
 {
   "name": "Crypter",
   "productName": "Crypter",
-  "version": "1.0.0",
-  "description": "A cross-platform end-to-end encryption cloud sync client",
+  "version": "5.0.0",
+  "description": "An innovative, convenient and secure cross-platform crypto app",
   "license": "MIT",
   "repository": "https://github.com/HR/Crypter",
   "homepage": "https://github.com/HR/Crypter",
   "bugs": "https://github.com/HR/Crypter/issues",
+  "main": "./app/index.js",
   "author": {
     "name": "Habib Rehman",
-    "email": "Habib.R@outlook.com",
+    "email": "H@Rehman.email",
     "url": "https://git.io/HR"
   },
-  "engines": {
-    "node": ">=4"
+  "build": {
+    "appId": "com.github.hr.crypter",
+    "asar": false,
+    "files": [
+      "**/*",
+      "!**/node_modules/.bin",
+      "!**/._*",
+      "!**/{.*,.git,*.yml,*.md,README,readme,test*,*.less,gulpfile.js}",
+      "!script${/*}",
+      "!test${/*}"
+    ],
+    "compression": "normal",
+    "fileAssociations": {
+      "ext": "crypto",
+      "name": "CRYPTO",
+      "role": "Editor",
+      "description": "The Crypter encryption format. More info at git.io/Crypter.info#crypto-file"
+    },
+    "mac": {
+      "category": "public.app-category.utilities",
+      "publish": "github",
+      "identity": null
+    },
+    "dmg": {
+      "background": "build/background.tif",
+      "icon": "vicon.icns",
+      "iconSize": 116,
+      "iconTextSize": 13,
+      "contents": [
+        {
+          "x": 240,
+          "y": 135
+        },
+        {
+          "x": 240,
+          "y": 400,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ],
+      "window": {
+        "width": "480",
+        "height": "540"
+      }
+    },
+    "linux": {
+      "category": "Utility",
+      "publish": "github"
+    },
+    "win": {
+      "icon": "icon.ico",
+      "target": "nsis",
+      "publish": "github"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": true
+    },
+    "snap": {
+      "publish": "github"
+    }
   },
   "scripts": {
-    "electronVersion": "node_modules/.bin/electron -v | sed s/\\v//g",
-    "test": "TEST_RUN=true mocha --compilers js:babel-core/register test/test.js",
-    "xltest": "unset TEST_RUN && rm -rf ~/Library/Application\\ Support/CrypterTest && mocha --compilers js:babel-core/register ./test/ui/*.js",
-    "xtest": "unset TEST_RUN && npm run xtestbuild && mocha --compilers js:babel-core/register ./test/ui/*.js",
-    "xtestbuild": "npm_package_productName=CrypterTest && electron-packager . $npm_package_productName --out=dest --ignore='(test|dest|coverage|backups|github)' --asar=false --platform=darwin --arch=x64 --version=$(npm run electronVersion) --icon=res/app-icons/Crypter.icns --app-copyright=HR --overwrite && npm run productNameChange",
-    "xbuild": "electron-packager . $npm_package_productName --out=dest --ignore='(test|dest|coverage|backups|github)' --asar=false --platform=darwin --arch=x64 --version=$(npm run electronVersion) --icon=res/app-icons/Crypter.icns --app-copyright=Habib_Rehman --overwrite",
-    "coverage": "TEST_RUN=true ./node_modules/.bin/babel-node ./node_modules/.bin/isparta cover --root src/ ./node_modules/.bin/_mocha -- test/test.js --reporter mocha-lcov-reporter",
-    "coveralls": "node ./node_modules/.bin/coveralls < coverage/lcov.info",
-    "codeclimate": "node ./node_modules/.bin/codeclimate-test-reporter < coverage/lcov.info",
-    "productNameChange": "perl -pi -e 's/\"Crypter\"/\"CrypterTest\"/g' ./dest/CrypterTest-darwin-x64/CrypterTest.app/Contents/Resources/app/package.json && perl -pi -e 's/Crypter/CrypterTest/g' ./dest/CrypterTest-darwin-x64/CrypterTest.app/Contents/Resources/app/index.js",
-    "start": "./node_modules/.bin/electron .",
-    "wbuild": "chmod +x script/win-build.sh && script/win-build.sh",
-    "build": "electron-packager . $npm_package_productName --out=dest --ignore='(test|dest|coverage)' --prune --asar --all --version=$(npm run electronVersion)"
+    "pack": "electron-builder --dir",
+    "build:mac": "electron-builder -m -c.electronVersion $(npm info electron version)",
+    "build:lin": "electron-builder -l --x64 --ia32 -c.electronVersion $(npm info electron version)",
+    "build:win": "electron-builder -w --x64 --ia32",
+    "start": "electron .",
+    "postinstall": "electron-builder install-app-deps",
+    "nodeGypReBuild": "electron-rebuild .",
+    "electronV": "electron -v | sed s/\\v//g",
+    "test": "TEST_RUN=true mocha --require @babel/register test/test.js",
+    "coverage": "TEST_RUN=true nyc --reporter=lcov mocha -- test/test.js",
+    "coveralls": "coveralls < coverage/lcov.info",
+    "codeclimate": "node codeclimate-test-reporter < coverage/lcov.info",
+    "package": "electron-packager . $npm_package_productName --out=dest --ignore='(test|dest|coverage)' --prune --asar --all --version=$(npm run electronVersion)",
+    "winpackage": "chmod +x script/win-build.sh && script/win-build.sh",
+    "xtest": "npm run xtestbuild && npm run xltest",
+    "xpackage": "electron-packager . $npm_package_productName --out=dest --ignore='(test|dest|coverage|github)' --asar=false --platform=darwin --arch=x64 --version=$(npm run electronVersion) --icon=app/icons/Crypter.icns --app-copyright=Habib_Rehman --overwrite",
+    "xltest": "unset TEST_RUN && rm -rf ~/Library/Application\\ Support/CrypterTest/ && mocha --require @babel/register ./test/ui/*.js",
+    "xtestbuild": "npm_package_productName=CrypterTest && electron-packager . $npm_package_productName --out=dest --ignore='(test|dest|coverage|backups|github)' --asar=false --platform=darwin --arch=x64 --version=$(npm run electronVersion) --icon=app/icons/Crypter.icns --app-copyright=HR --overwrite && npm run productNameChange"
   },
   "keywords": [
     "encryption",
+    "decryption",
     "crypto",
     "end-to-end",
     "client",
     "electron"
   ],
-  "dependencies": {
-    "babel-core": "*",
-    "electron-debug": "*",
-    "electron-prebuilt": "^1.0.2",
-    "estraverse": "^4.2.0",
-    "fs-extra": "*",
-    "handlebars": "*",
-    "jquery": "*",
-    "level-js": "*",
-    "leveldown": "*",
-    "levelup": "*",
-    "lodash": "*",
-    "moment": "*",
-    "winston": "^2.2.0"
-  },
   "devDependencies": {
-    "babel-cli": "^6.6.5",
-    "babel-eslint": "*",
-    "babel-preset-es2015": "*",
-    "chai": "*",
-    "chai-as-promised": "^5.3.0",
-    "codeclimate-test-reporter": "^0.3.1",
-    "coveralls": "^2.11.9",
-    "devtron": "^1.1.0",
-    "electron-packager": "*",
-    "eslint": "*",
-    "eslint-plugin-html": "*",
-    "gulp": "*",
-    "gulp-babel": "^6.1.2",
-    "gulp-babel-istanbul": "^1.0.0",
-    "gulp-env": "^0.4.0",
-    "gulp-inject-modules": "^0.2.0",
-    "gulp-json-editor": "^2.2.1",
-    "gulp-less": "^3.0.5",
-    "gulp-mocha": "^2.2.0",
-    "gulp-shell": "*",
-    "isparta": "^4.0.0",
-    "less-plugin-clean-css": "^1.5.1",
-    "mocha": "^2.4.5",
-    "mocha-lcov-reporter": "^1.2.0",
-    "spectron": "^3.0.0",
-    "standard": "^7.0.1"
+    "@babel/core": "^7.11.0",
+    "@babel/preset-env": "^7.11.0",
+    "@babel/register": "^7.10.5",
+    "babel-cli": "6.26.0",
+    "chai": "4.2.0",
+    "chai-as-promised": "7.1.1",
+    "codeclimate-test-reporter": "0.5.1",
+    "coveralls": "3.1.0",
+    "electron": "9.1.2",
+    "electron-builder": "^22.8.0",
+    "electron-packager": "15.0.0",
+    "electron-rebuild": "1.11.0",
+    "gulp": "4.0.2",
+    "gulp-babel": "8.0.0",
+    "gulp-babel-istanbul": "1.6.0",
+    "gulp-env": "0.4.0",
+    "gulp-inject-modules": "1.0.0",
+    "gulp-json-editor": "2.5.4",
+    "gulp-less": "4.0.1",
+    "gulp-mocha": "7.0.2",
+    "isparta": "4.1.1",
+    "less-plugin-clean-css": "1.5.1",
+    "mocha": "8.1.0",
+    "mocha-lcov-reporter": "1.3.0",
+    "nyc": "^15.1.0",
+    "spectron": "11.1.0"
   }
 }

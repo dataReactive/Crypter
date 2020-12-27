@@ -12,9 +12,12 @@ test/render.js
 spec/
 deprecated/
 screens/
+.crypting/
+.decrypting
+*.token
 
 
-# Icon must end with two \r
+# Icon must end with two
 Icon
 
 # Thumbnails
@@ -63,6 +66,7 @@ coverage
 build/Release
 
 # Dependency directories
+app/node_modules
 node_modules
 jspm_packages
 
@@ -79,12 +83,14 @@ bower_components
 .bower-tmp
 
 # Other stuff to ignore
-/dist
+dist/
 *.log
 .editorconfig
 .Debug
-src/elements/*.js
+core/elements/*.js
 debug
 backups/
 *.app
 chromedriver*
+
+.nyc_output/
